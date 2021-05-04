@@ -890,3 +890,129 @@ Now, maybe there is something we can do my doing ./stage1 flag.txt /hop. I will 
 
 All the challenges in the competition were great, thank you !!!
 Next year I will be back with real poney-ing skills !
+
+## Ventriglisse 
+
+A solution based on networkx :).
+
+```python
+from pwn import *
+import base64
+from PIL import Image
+from io import BytesIO
+import networkx
+import numpy as np
+
+
+
+def solve(im):
+    print(im.size)
+    nx = im.size[0]//64-2 
+    ny = im.size[1]//64 -3
+    print(nx,ny)
+    X_offset = 64
+    Y_offset = 2*64
+    px = 2 * nx + 1
+    py = 2 * ny + 1
+    print(px,py)
+    graph = networkx.DiGraph()
+    ma = np.zeros((py+4,px),dtype=int)
+    for x in range(px):
+        for y in range(py):
+
+            mypx = im.getpixel((32*x+X_offset, 32*y+Y_offset))
+            #print(mypx)
+            ma[y+2][x]=int(min(mypx)/255)
+    
+    for y in range(py+2):
+        ma[y][-1]=0
+    for x in range(px):
+        ma[-1][x]=0
+        ma[-2][x]=0
+        ma[-3][x]=0
+    
+    startnode = None
+    endnode = None
+    y=1
+    for x in range(nx+1):
+        y = 2
+        if im.getpixel((64*x+32,64*y-20))==(229,20,0):
+            endnode= x-1
+        y = ny+3
+        if im.getpixel((64*x+32,64*y-50))==(229,20,0):
+            startnode = x-1
+    print(startnode)
+    print(endnode)
+    ma[1][2*(endnode)+1]=1
+    ma[2][2*(endnode)+1]=1
+    ma[-2][2*(startnode)+1]=1
+    ma[-3][2*(startnode)+1]=1
+    print(len(ma)) 
+    for a in ma :
+        print(list(a))
+    
+    for x in range(1,px,2):
+        for y in range(1,py+4,2):
+            if ma[y][x]==1:
+                for dx, dy in ((-1,0),(1,0),(0,-1),(0,1)):
+                    ox = x+dx
+                    oy = y+dy
+                    i = 1
+                    p = False
+                    while  ox<px and oy <(py+4) and ma[oy][ox] == 1 : 
+                        ox = x + (2*i+1) * dx
+                        oy = y + (2*i+1) * dy
+                        i += 1
+                        p = True
+                    ox-=dx
+                    oy-=dy
+                    if p :
+                        #print(((x-1)//2,(y-1)//2), ((ox-1)//2,(oy-1)//2))
+                        graph.add_edge(((x-1)//2,(y-1)//2), ((ox-1)//2,(oy-1)//2))
+                        #graph.add_edge(((ox-1)//2,(oy-1)//2), ((x-1)//2,(y-1)//2))
+    
+
+
+    path = networkx.shortest_path(graph,(startnode,(len(ma)-3)//2),(endnode,0))
+    result = ''
+    for i in range(len(path)-1):
+        #print(path[i])
+        myx, myy  = path[i]
+        nxx, nxy  = path[i+1]
+        if myx < nxx:
+            result += 'E'
+        if myx > nxx:
+            result += 'O'
+        if myy < nxy:
+            result += 'S'
+        if myy > nxy:
+            result += 'N'
+    print(result)
+    return result + ''
+
+r = remote('challenges1.france-cybersecurity-challenge.fr',7002, level='info')
+rec = r.recvuntil('END MAZE ---')
+print(rec[:200])
+maze = rec.decode().split('BEGIN MAZE ---')[1].split('\n')
+b64data = ''.join(maze[1:-1])
+im = Image.open(BytesIO(base64.b64decode(b64data)))
+print(solve(im))
+
+r.sendline('')
+mazeid = 0
+while True:
+    try:
+        rec = ''
+        rec = r.recvuntil('END MAZE ---')
+        print(rec[:200])
+        maze = rec.decode().split('BEGIN MAZE ---')[1].split('\n')
+        b64data = ''.join(maze[1:-1])
+        im = Image.open(BytesIO(base64.b64decode(b64data)))
+        im.save('maze.png')
+        r.sendline(solve(im))
+    except:
+        print(r.recvrepeat(1.0))
+        break
+```
+
+
