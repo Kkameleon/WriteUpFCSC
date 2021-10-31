@@ -2,29 +2,6 @@
 
 *By Kkameleon*
 
-## Profile
-- Firstname : Sylvain
-- Name : Girard
-- Age : 22 years (02/01/1999)
-- Main activity : Student at Telecom Paris (Cybersecurity, Datascience and Finance)
-- Ctf experience : At least one everymonth since one year and a half
-- Root me profile : https://www.root-me.org/Kkameleon (30th - 12445pts)
-- General ranking at FCSC 2020 (général) : 31th
-
-Traditional wisdom has it that one must choose between achieving outstanding studies in computer science and in economics, but I did not. I began as an Android developer in high school. Upon graduation, I spent two years in a preparatory mathematics and physics class which get me into Telecom Paris. I did a two-month internship in the cybersecurity team of the oil and gas company Total in the summer of 2020. Next year, I am either going to HEC or the LSE (London School of Economics) to strengthen my financial skills.
-
-My profile is built upon three pillars : 
-
-- Cybersecurity : 
-    - I do CTF once a month, in Team or alone
-    - I give free cybersecurity classes every monday from 23h to 00h00 to members of Télécom Imp'Hackt
-    - I am active on Root me (Kkamaleon)
-- DataScience : My team and I won the SCOR datathon in early march 2021
-- Finance : I am interested in fintech, I trade cryptocurrencies
-
-I have a strong general profile except in pwn where I am still learning.
-
-
 ## BattleChip (or how to sink several times before turning into a torpedo) (time : 8 hours)
 
 My first impression at the beginning of the FCSC was that this challenge on a complete new chip with a lot of documentation wasn't going to be profitable.
